@@ -1,0 +1,16 @@
+<!doctype html>
+<html lang="en"><meta charset="utf-8"><title>YouTube UTM Builder — ShrinkForge</title>
+<body style="font-family:system-ui;margin:40px;max-width:820px">
+<h1>YouTube UTM Builder</h1>
+<p>Paste your destination URL → copy → shorten on <a href="https://shrinkforge.com" target="_blank" rel="noopener">ShrinkForge</a>.</p>
+<input id="u" placeholder="https://your-site.com/page" style="width:100%;padding:10px">
+<p><button id="b">Build</button> <button id="c">Copy</button></p>
+<textarea id="o" rows="3" style="width:100%;padding:10px"></textarea>
+<script>
+  const b=document.getElementById('b'), c=document.getElementById('c'), u=document.getElementById('u'), o=document.getElementById('o');
+  b.onclick=()=>{ try{ const x=new URL(u.value.trim()); const p=x.searchParams;
+    p.set('utm_source','youtube'); p.set('utm_medium','video'); p.set('utm_campaign','tutorial');
+    x.search=p.toString(); o.value=x.toString(); }catch(e){ o.value='Invalid URL'; } };
+  c.onclick=async()=>{ if(!o.value) return; try{ await navigator.clipboard.writeText(o.value); alert('Copied!'); }catch(e){ o.select(); document.execCommand('copy'); alert('Copied!'); } };
+</script>
+</body></html>
