@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ShrinkForge UTM Builder (Examples)</title>
+  <style>
+    body{font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;margin:40px;line-height:1.5;max-width:820px}
+    h1{margin:0 0 12px}
+    .card{border:1px solid #e5e7eb;border-radius:14px;padding:18px;margin:14px 0}
+    label{display:block;margin:10px 0 6px;font-weight:600}
+    input,select,textarea{width:100%;padding:10px;border:1px solid #d1d5db;border-radius:10px}
+    .row{display:flex;gap:12px;flex-wrap:wrap}
+    .row > *{flex:1}
+    button{padding:10px 14px;border:0;border-radius:10px;cursor:pointer}
+    .primary{background:#111827;color:#fff}
+    .ghost{background:#f3f4f6}
+    .muted{color:#6b7280;font-size:14px}
+    .badge{display:inline-block;background:#eef2ff;border:1px solid #c7d2fe;color:#3730a3;padding:4px 8px;border-radius:999px;font-size:12px;margin-left:8px}
+  </style>
+</head>
+<body>
+  <h1>ShrinkForge UTM Builder <span class="badge">example</span></h1>
+  <p class="muted">Paste your destination URL, choose a preset, copy the tracking URL, then shorten it on <a href="https://shrinkforge.com" target="_blank" rel="noopener">ShrinkForge</a>.</p>
+
+  <div class="card">
+    <label for="url">Destination URL</label>
+    <input id="url" type="url" placeholder="https://your-site.com/page" />
+
+    <div class="row">
+      <div>
+        <label for="preset">Preset</label>
+        <select id="preset">
+          <option value="youtube">YouTube (video)</option>
+          <option value="blog">Blog (post)</option>
+          <option value="telegram">Telegram (channel)</option>
+        </select>
+      </div>
+      <div>
+        <label for="campaign">Campaign (optional)</label>
+        <input id="campaign" placeholder="spring-launch" />
+      </div>
+    </div>
+
+    <label for="result">Tracking URL</label>
+    <textarea id="result" readonly rows="3" placeholder="Your UTM URL will appear here"></textarea>
+
+    <div class="row">
+      <button class="ghost" id="build">Build URL</button>
+      <button class="primary" id="copy">Copy</button>
+      <a class="ghost" href="https://shrinkforge.com" target="_blank" rel="noopener"><button class="ghost">Open ShrinkForge</button></a>
+    </div>
+  </div>
+
+  <script>
+    const url = document.getElementById('url');
+    const preset = document.getElementById('preset');
+    const campaign = document.getElementById('campaign');
+    const result = document.getElementById('result');
+
+    function buildUTM(u, p, c){
+      try{
+        const base = new URL(u);
+        const params = base.searchParams;
+        if(p === 'youtube'){
+          params.set('utm_source','youtube');
+          params.set('utm_medium','video');
+        }else if(p === 'blog'){
+          params.set('utm_source','blog');
+          params.set('utm_medium','post');
+        }else{
+          params.set('utm_source','telegram');
+          params.set('utm_medium','channel');
+        }
+        if(c) params.set('utm_campaign', c);
+        base.search = params.toString();
+        return base.toString();
+      }catch(e){ return ''; }
+    }
+
+    document.getElementById('build').onclick = () => {
+      const out = buildUTM(url.value.trim(), preset.value, campaign.value.trim());
+      result.value = out || 'Invalid URL';
+    };
+
+    document.getElementById('copy').onclick = async () => {
+      if(!result.value) return;
+      try{ await navigator.clipboard.writeText(result.value); alert('Copied!'); }
+      catch(e){ result.select(); document.execCommand('copy'); alert('Copied!'); }
+    };
+  </script>
+</body>
+</html>
